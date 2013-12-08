@@ -15,8 +15,8 @@ For example:
 
 INSTALL:
 	
-	wget -c https://raw.github.com/gloryman/btce-trollbox/master/btce-trollbox.py
-	wget -c https://raw.github.com/gloryman/btce-trollbox/master/websocket.py
+	wget -c https://raw.github.com/dpriest/btce-trollbox/master/btce-trollbox.py
+	wget -c https://raw.github.com/dpriest/btce-trollbox/master/websocket.py
 
 
 Donations(Bitcoin address):)
