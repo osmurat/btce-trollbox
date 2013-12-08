@@ -4,7 +4,7 @@
 """
 TrollBox v0.2
 
-btc-e.com chat channal
+btc-e.com chat channel
 """
 
 from   __future__     import print_function
@@ -17,8 +17,9 @@ import websocket
 from   requests       import get as httpget
 from   json           import loads as jsload
 from   bytebuffer     import ByteBuffer
+import pdb
 
-__author__ = "slavamnemonic@gmail.com"
+__author__ = "wenhaoz100@gmail.com"
 
 COLOR_0   = "\033[m"      # серый
 COLOR_1   = "\033[1m"     # жирный (bold)
@@ -35,7 +36,7 @@ COLOR_10  = "\033[1;30m"  # ярко-синий
 COLORS   = (COLOR_2, COLOR_3, COLOR_4, COLOR_5,
             COLOR_6, COLOR_7, COLOR_8, COLOR_9)
 
-CHANNEL  = "chat_ru"
+CHANNEL  = "chat_en"
 BTCE_CHAT_URL = "wss://ws.pusherapp.com/app/4e0ebd7a8b66fa3554a4?protocol=6&client=js&version=2.0.0&flash=false"
 TRADINGVIEW_CHAT = "https://www.tradingview.com/message-pipe-es/public"
 CONNECTION_TIMEOUT = 120
@@ -43,7 +44,7 @@ XHR_READ_SIZE = 5
 RE_USERNAMES = re_compile("(^\w*,)|(^@\w*)")
 
 
-def btce_transport(url=BTCE_CHAT_URL):##{
+def btce_transport(channel = CHANNEL, url=BTCE_CHAT_URL):##{
     while True:
         try:
             ws = websocket.WebSocket()
@@ -53,7 +54,7 @@ def btce_transport(url=BTCE_CHAT_URL):##{
             print("[!!!] Esteblish connection error: ", e)
             sleep(3)
 
-        chat_handshake(ws)
+        chat_handshake(ws, channel)
         yield ws
 ##}
 
@@ -69,8 +70,8 @@ def tradingview_transport(url=TRADINGVIEW_CHAT):##{
             sleep(3)
 ##}
 
-def chat_handshake(ws):##{
-    hello_msg = """{"event":"pusher:subscribe","data":{"channel":"%s"}}"""% CHANNEL
+def chat_handshake(ws, channel):##{
+    hello_msg = """{"event":"pusher:subscribe","data":{"channel":"%s"}}"""% channel
     ws.recv()
     ws.send(hello_msg)
     subscribe_status = ws.recv()
@@ -247,13 +248,16 @@ def main():##{
     stream = None
     opts, args = getopt(argv[1:], "-h", longopts=("help", "btce", "tradingview"))
 
+    if args[0]:
+        channel = args[0]
+
     for opt, value in opts:
         if opt in ("-h", "--help"):
             help()
             exit(0)
 
         if opt == "--btce":
-            stream = btcex(btce_transport())
+            stream = btcex(btce_transport(channel))
             continue
 
         if opt == "--tradingview":
@@ -261,7 +265,7 @@ def main():##{
             continue
 
     if not stream:
-        stream = btcex(btce_transport())
+        stream = btcex(btce_transport(channel))
     
     chat_loop(stream)
 ##}
