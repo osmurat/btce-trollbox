@@ -13,7 +13,7 @@ from   getopt         import getopt
 from   re             import sub as re_sub, compile as re_compile
 from   htmlentitydefs import name2codepoint
 from   time           import sleep
-import websocket
+import websocket, time, sys
 from   requests       import get as httpget
 from   json           import loads as jsload
 from   bytebuffer     import ByteBuffer
@@ -217,7 +217,16 @@ def tradingviewx(transport):##{
         yield(login, msg)
 ##}
 
-def chat_loop(chat_stream):##{
+def log(format_params,channel):
+    old_stdout = sys.stdout
+    log_file = open("chart_"+channel+".log", "a")
+    sys.stdout = log_file
+    print("{time}\n{login:13}: {msg} ".format(**format_params))
+    sys.stdout = old_stdout
+    log_file.close()
+    print("{time}\n{login_clr}{login:13}{colon_clr}: {nocollor} {msg} ".format(**format_params))
+
+def chat_loop(chat_stream, channel):##{
     logins = set()
     for login, msg in chat_stream:
         if not login: continue
@@ -228,10 +237,11 @@ def chat_loop(chat_stream):##{
             "msg"       : message_preprocess(msg, logins),
             "login_clr" : COLORS[hash(login) % len(COLORS)],
             "colon_clr" : COLOR_10,
-            "nocollor"  : COLOR_0
+            "nocollor"  : COLOR_0,
+            "time"      : time.ctime()
         }
 
-        print("{login_clr}{login:13}{colon_clr}: {nocollor} {msg} ".format(**format_params))
+        log(format_params,channel)
 ##}
 
 def help():##{
@@ -248,8 +258,10 @@ def main():##{
     stream = None
     opts, args = getopt(argv[1:], "-h", longopts=("help", "btce", "tradingview"))
 
-    if args[0]:
+    if len(args) > 0:
         channel = args[0]
+    else:
+        channel = CHANNEL
 
     for opt, value in opts:
         if opt in ("-h", "--help"):
@@ -267,7 +279,7 @@ def main():##{
     if not stream:
         stream = btcex(btce_transport(channel))
     
-    chat_loop(stream)
+    chat_loop(stream, channel)
 ##}
 
 if __name__ == "__main__":
