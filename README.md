@@ -17,6 +17,7 @@ INSTALL:
 	
 	wget -c https://raw.github.com/dpriest/btce-trollbox/master/btce-trollbox.py
 	wget -c https://raw.github.com/dpriest/btce-trollbox/master/websocket.py
+    makedir log
 
 
 Donations(Bitcoin address):)
