@@ -19,7 +19,7 @@ INSTALL:
 	wget -c https://raw.github.com/gloryman/btce-trollbox/master/websocket.py
 
 
-Donations :)
+Donations(Bitcoin address):)
 
-	1CFUQh94gLDJad7StX1Aqd5bt4uJuB3qSG
+	1LwCmf6BTsntJE4MLvb6WYeiHDjozQdToo
 
