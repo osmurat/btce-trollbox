@@ -20,7 +20,7 @@ Copyright (C) 2010 Hiroki Ohtani(liris)
 """
 
 
-import socket
+import socket, ssl
 from urlparse import urlparse
 import os
 import array
@@ -197,7 +197,7 @@ _HEADERS_TO_CHECK = {
 
 class _SSLSocketWrapper(object):
     def __init__(self, sock):
-        self.ssl = socket.ssl(sock)
+        self.ssl = ssl.wrap_socket(sock)
 
     def recv(self, bufsize):
         return self.ssl.read(bufsize)
