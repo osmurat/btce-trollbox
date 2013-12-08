@@ -219,7 +219,7 @@ def tradingviewx(transport):##{
 
 def log(format_params,channel):
     old_stdout = sys.stdout
-    log_file = open("chart_"+channel+".log", "a")
+    log_file = open("log/chart_"+channel+".log", "a")
     sys.stdout = log_file
     print("{time}\n{login:13}: {msg} ".format(**format_params))
     sys.stdout = old_stdout
