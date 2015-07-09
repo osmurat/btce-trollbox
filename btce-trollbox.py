@@ -18,6 +18,7 @@ from   requests       import get as httpget
 from   json           import loads as jsload
 from   bytebuffer     import ByteBuffer
 import pdb
+import HTMLParser
 
 __author__ = "wenhaoz100@gmail.com"
 
@@ -195,6 +196,7 @@ def log(format_params,channel):
 
 def chat_loop(chat_stream, channel):##{
     logins = set()
+    h = HTMLParser.HTMLParser()
     for login, msg in chat_stream:
         if not login: continue
         logins.add(login)
