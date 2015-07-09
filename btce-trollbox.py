@@ -42,8 +42,7 @@ BTCE_CHAT_URL = "wss://ws.pusherapp.com/app/4e0ebd7a8b66fa3554a4?protocol=6&clie
 TRADINGVIEW_CHAT = "https://www.tradingview.com/message-pipe-es/public"
 CONNECTION_TIMEOUT = 120
 XHR_READ_SIZE = 5
-RE_USERNAMES = re_compile("(^\w*,)|(^@\w*)")
-
+RE_USERNAMES = re_compile("(?:(^\w+)(?:,))|(?:(?:^@)(\w+))")
 
 def btce_transport(channel = CHANNEL, url=BTCE_CHAT_URL):##{
     while True:
@@ -103,38 +102,6 @@ def string( val ):  #{
         except: val = unicode( val )
 
     return val
-#}
-
-def replace_entities( text ):  #{
-    """ Replaces HTML/XML character references and entities in a text string with
-        actual Unicode characters.
-
-        @param text The HTML (or XML) source text.
-        @return The plain text, as a Unicode string, if necessary.
-
-        >>> a = '&lt;a href=&quot;/abc?a=50&amp;amp;b=test&quot;&gt;'
-        >>> print replace_entities( a )
-        <a href="/abc?a=50&amp;b=test">
-    """
-    def fixup(m):
-        text = m.group(0)
-        if text[:2] == "&#":
-            # character reference
-            try:
-                if text[:3] == "&#x":
-                    return unichr(int(text[3:-1], 16))
-                else:
-                    return unichr(int(text[2:-1]))
-            except ValueError:
-                pass
-        else:
-            # named entity
-            try:
-                text = unichr(name2codepoint[text[1:-1]])
-            except KeyError:
-                pass
-        return text # leave as is
-    return re_sub("&#?\w+;", fixup, string(text))
 #}
 
 def message_preprocess(msg, logins=set()):##{
@@ -234,6 +201,7 @@ def chat_loop(chat_stream, channel):##{
     for login, msg in chat_stream:
         if not login: continue
         logins.add(login)
+        msg=h.unescape(msg)
 
         msg=h.unescape(msg)
         ind=msg.find(",")
@@ -294,7 +262,7 @@ def main():##{
 
     if not stream:
         stream = btcex(btce_transport(channel))
-    
+
     chat_loop(stream, channel)
 ##}
 
