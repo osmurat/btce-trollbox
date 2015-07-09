@@ -18,7 +18,6 @@ from   requests       import get as httpget
 from   json           import loads as jsload
 from   bytebuffer     import ByteBuffer
 import pdb
-import HTMLParser
 
 __author__ = "wenhaoz100@gmail.com"
 
@@ -189,35 +188,20 @@ def log(format_params,channel):
     old_stdout = sys.stdout
     log_file = open("log/chart_"+channel+".log", "a")
     sys.stdout = log_file
-    print("{time:28}{login:13}: {touser}{msg} ".format(**format_params))
+    print("{time}\n{login:13}: {msg} ".format(**format_params))
     sys.stdout = old_stdout
     log_file.close()
-    print("{time:28}{login_clr}{login:13}{colon_clr}: {touser_clr}{touser}{nocollor} {msg} ".format(**format_params))
+    print("{time}\n{login_clr}{login:13}{colon_clr}: {nocollor} {msg} ".format(**format_params))
 
 def chat_loop(chat_stream, channel):##{
     logins = set()
-    h = HTMLParser.HTMLParser()
-
     for login, msg in chat_stream:
         if not login: continue
         logins.add(login)
         msg=h.unescape(msg)
 
-        msg=h.unescape(msg)
-        ind=msg.find(",")
-        if ind<=0:
-            touser = ""
-        else:
-            touser = msg[0:ind]
-            if touser not in logins:
-                touser = ""
-            else:
-                msg = msg[ind:]
-
         format_params = {
             "login"     : login,
-            "touser"	: touser,
-            "touser_clr": COLORS[hash(touser) % len(COLORS)],
             "msg"       : message_preprocess(msg, logins),
             "login_clr" : COLORS[hash(login) % len(COLORS)],
             "colon_clr" : COLOR_10,
